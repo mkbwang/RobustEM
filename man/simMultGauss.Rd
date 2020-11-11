@@ -5,14 +5,14 @@
 \title{Simulate data points from several different gaussian distributions. The number
 of points from different distributions are the same.}
 \usage{
-simMultGauss(n, d, c, out_perc, out_mag, cov_scale = 1)
+simMultGauss(n, d, cluster, out_perc, out_mag, cov_scale = 1)
 }
 \arguments{
 \item{n}{Number of points in each Gaussian distribution}
 
 \item{d}{Dimension of each point}
 
-\item{c}{Number of clusters}
+\item{cluster}{Number of clusters}
 
 \item{out_perc}{Proportion of outliers in each cluster}
 
@@ -34,7 +34,7 @@ Simulate data points from several different gaussian distributions. The number
 of points from different distributions are the same.
 }
 \examples{
-sim_info <- simMultGauss(n = 120, d = 2, c = 6, out_perc = 0.03, out_mag = 4)
+sim_info <- simMultGauss(n = 120, d = 2, cluster = 6, out_perc = 0.03, out_mag = 4)
 
 
 }

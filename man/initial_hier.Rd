@@ -2,16 +2,15 @@
 % Please edit documentation in R/initial_hier.R
 \name{initial_hier}
 \alias{initial_hier}
-\title{Carry out hierarchical clustering on the raw data.
-Use the outcome as the initial value for EM algorithm.}
+\title{Hierarchical Clustering}
 \usage{
-initial_hier(sampleMat, c)
+initial_hier(sampleMat, cluster)
 }
 \arguments{
 \item{sampleMat}{A matrix with number of rows equal to the number of points and
 the number of columns equal to the dimension.}
 
-\item{c}{Prespecified number of clusters}
+\item{cluster}{Prespecified number of clusters}
 }
 \value{
 A list with:
@@ -24,10 +23,6 @@ initial proportion of clusters tau (a vector with c elements)
 }
 \description{
 Carry out hierarchical clustering on the raw data.
-Use the outcome as the initial value for EM algorithm.
-}
-\examples{
-sim_info <- simMultGauss(n = 120, d = 2, c = 6, out_perc = 0.03, out_mag = 4)
-initial_info <- initial_hier(sim_info[["simdata"]], c=6)
-
+Use the outcome as the initial value for EM algorithm. For complete example please check
+out the documentation for function robustEM.
 }

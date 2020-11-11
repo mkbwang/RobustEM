@@ -33,9 +33,9 @@
 #' simulation <- multivarGaussian(n = 200, d = 3, out_perc = 0.03, out_mag = 4)
 #'
 multivarGaussian = function(n, d, out_perc, out_mag, cov_scale = 1){
-  mu = runif(d,1,20*(1/d))
+  mu = runif(d,1,50)
 
-  sigma = matrix(runif(d*d, -1, 1), d, d)
+  sigma = matrix(runif(d*d, -3, 3), d, d)
   sigma = (sigma + t(sigma))/2
   eigs = eigen(sigma)$values
   if (min(eigs) <= 0.5) {sigma = sigma - (min(eigs) - 0.5) * diag(d)}
@@ -73,7 +73,7 @@ multivarGaussian = function(n, d, out_perc, out_mag, cov_scale = 1){
 #' @param d
 #' Dimension of each point
 #'
-#' @param c
+#' @param cluster
 #' Number of clusters
 #'
 #' @param out_perc
@@ -99,11 +99,11 @@ multivarGaussian = function(n, d, out_perc, out_mag, cov_scale = 1){
 #'
 #'
 #' @examples
-#' sim_info <- simMultGauss(n = 120, d = 2, c = 6, out_perc = 0.03, out_mag = 4)
+#' sim_info <- simMultGauss(n = 120, d = 2, cluster = 6, out_perc = 0.03, out_mag = 4)
 #'
 #'
-simMultGauss = function(n, d, c, out_perc, out_mag, cov_scale = 1){
-  samples_simMultGauss = replicate(c, multivarGaussian(n = n, d = d,
+simMultGauss = function(n, d, cluster, out_perc, out_mag, cov_scale = 1){
+  samples_simMultGauss = replicate(cluster, multivarGaussian(n = n, d = d,
                                                        out_perc = out_perc, out_mag = out_mag, cov_scale))
 
   sampleMu = do.call(rbind, samples_simMultGauss[1,])

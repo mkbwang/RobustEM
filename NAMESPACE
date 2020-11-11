@@ -3,6 +3,7 @@
 export(EM_alg_GMM)
 export(initial_hier)
 export(multivarGaussian)
+export(robustEM)
 export(simMultGauss)
 importFrom(MASS,mvrnorm)
 importFrom(dplyr,"%>%")

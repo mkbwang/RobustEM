@@ -1,12 +1,14 @@
 
-
-#' Robust EM Algorithm for Gaussian Mixture Models. Given the prespecified number of clusters,
-#' the algorithm will calculate the mean and covariance of each cluster.
+#' Robust EM Algorithm for Gaussian Mixture Models.
+#'
+#' Given the prespecified number of clusters,
+#' the algorithm will calculate the mean and covariance of each cluster. For complete examples
+#' check out the documentation for robustEM.
 #'
 #' @param sampleMat
 #' All the points in a matrix
 #'
-#' @param c
+#' @param cluster
 #' Number of clusters
 #'
 #' @param lambda
@@ -29,9 +31,9 @@
 #'
 #' Updated covariances for each cluster
 #'
-#' Probability of each point in each cluster(a c*n matrix)
+#' Probability of each point in each cluster(a cluster*n matrix)
 #'
-#' Number of clusters (c)
+#' Number of clusters (cluster)
 #'
 #' Dimension (d)
 #'
@@ -40,23 +42,19 @@
 #'
 #' @export
 #'
-#' @examples
-#' sim_info <- simMultGauss(n = 120, d = 2, c = 6, out_perc = 0.03, out_mag = 4)
-#' initial_info <- initial_hier(sim_info[["simdata"]], c=6)
-#' result <- EM_alg_GMM(sim_info[['simdata']], c=6, inits = initial_info)
 #'
-EM_alg_GMM = function(sampleMat, c, lambda = 10, inits) {
+EM_alg_GMM = function(sampleMat, cluster, lambda = 10, inits) {
 
   ## Observations
   x = sampleMat
   n = nrow(x) # number of observations
   d = ncol(x) # number of dimensions
 
-  tau = matrix(inits[[3]], c, 1) # initial cluster proportion
+  tau = matrix(inits[[3]], cluster, 1) # initial cluster proportion
   mu = inits[[1]] # initial mean
   sigma = inits[[2]] # initial covariance
 
-  T_mat = matrix(0,c,n) # probability of each point in each cluster
+  T_mat = matrix(0,cluster,n) # probability of each point in each cluster
   max_it = 200
 
   for (l in unique(c(Inf, lambda^(5:1)))) { #unique
@@ -66,14 +64,14 @@ EM_alg_GMM = function(sampleMat, c, lambda = 10, inits) {
       old_T_mat = T_mat
 
       # E STEP: Construct the vector of the denom for T_mat for each i
-      for (j in 1:c) {
+      for (j in 1:cluster) {
         #print(sigma[[j]])
         if (det(sigma[[j]]) < 1e-7) {
           sigma[[j]] = diag(d) * 1e-1
         }
         L = chol(sigma[[j]], pivot = TRUE)
         y = solve(t(L), t(x - rep(mu[j,],each=n)))
-        T_mat[j,] = log(tau[j]) - 0.5 * colSums(y^2) - log(sqrt(2*pi*abs(prod(diag(L))))) # last term needs to be cleared up
+        T_mat[j,] = log(tau[j]) - 0.5 * colSums(y^2) - log(sqrt(2*pi)*abs(prod(diag(L)))) # last term needs to be cleared up
       }
 
       for (i in 1:n) {
@@ -85,7 +83,7 @@ EM_alg_GMM = function(sampleMat, c, lambda = 10, inits) {
       # M STEP: Update tau, mu and sigma
 
       # Update tau
-      for (j in 1:c) {
+      for (j in 1:cluster) {
         e = matrix(0, n, d)
         tau[j,] = (1/n)*sum(T_mat[j,])
 
@@ -95,41 +93,42 @@ EM_alg_GMM = function(sampleMat, c, lambda = 10, inits) {
         x1_sigma_inv = x1 %*% sigma_inv
         A = matrix(rowSums(x1_sigma_inv * x1), n, 1)
 
+        indices <- c()
+
         for (i in 1:n) {
-          if (A[i,] < l) { e[i,] = 0 }
-          else { e[i,] = x[i,] - mu[j,] }
+          if (A[i,] < l) {
+            e[i,] = 0
+            indices <- c(indices, i)
+          }
+          else {
+            e[i,] = x[i,] - mu[j,]
+          }
         }
 
-        # Update mu
-        mu[j,] = colSums(T_mat[j,]%*%(x-e))/sum(T_mat[j,])
-
-        # Update sigma
-        num = matrix(0,d,d)
-
         # Only use those points with error 0 to calc to the covariance martix
-        indices = which(e[,1]==0)
-        denom = sum(T_mat[j,indices])
-        x_prime = x[indices,]-e[indices,]-matrix(mu[j,], ncol=d, nrow=length(indices), byrow=T)
-        print(dim(x_prime))
-        print(dim(diag(T_mat[j,indices])))
-        num = t(x_prime)%*%diag(T_mat[j,indices])%*%x_prime
-        sigma[[j]] = matrix(num/denom, d, d)
+        if (length(indices) > 10){
+          # Update mu
+          mu[j,] = colSums(T_mat[j, indices]%*%(x[indices, ] - e[indices, ])) / sum(T_mat[j, indices])
+
+          # Update sigma
+          num = matrix(0,d,d)
+          denom = sum(T_mat[j,indices])
+          x_prime = x[indices,]-e[indices,]-matrix(mu[j,], ncol=d, nrow=length(indices), byrow=T)
+          num = t(x_prime)%*%diag(T_mat[j,indices])%*%x_prime
+          sigma[[j]] = matrix(num/denom, d, d)
+        }
 
         if (sum(T_mat[j,]!=0) <= 3) {
           mu[j,] = matrix(0, 1, d)
           sigma[[j]] = diag(d) * 1e-2
         }
-
-
       }
       if (max(abs(old_T_mat - T_mat)) < 1e-10) break
     }
     if(max(abs(old_mu - mu)) < 1e-6) break
-
   }
 
-  returnList = list(mu, sigma, T_mat, tau, c, d, n)
-  names(returnList) = c("mu", "sigma", "T_mat", "tau", "c", "d", "n")
+  returnList = list(mu, sigma, T_mat, tau, cluster, d, n, x)
+  names(returnList) = c("mu", "sigma", "T_mat", "tau", "cluster", "d", "n", "x")
   return(returnList)
-
 }
