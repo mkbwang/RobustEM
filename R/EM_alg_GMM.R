@@ -129,6 +129,6 @@ EM_alg_GMM = function(sampleMat, cluster, lambda = 10, inits) {
   }
 
   returnList = list(mu, sigma, T_mat, tau, cluster, d, n, x)
-  names(returnList) = c("mu", "sigma", "T_mat", "tau", "cluster", "d", "n", "x")
+  names(returnList) = c("mu", "sigma", "T_mat", "tau", "cluster", "d", "n", "raw")
   return(returnList)
 }

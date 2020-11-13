@@ -13,6 +13,10 @@
 #' @param out_mag
 #' The magnitude of the outliers in terms of the covariance
 #'
+#' @param independent
+#' Whether covariances of points are zero. Default to be true.
+#'
+#'
 #' @param cov_scale
 #' Constant parameter for setting the covariance of the non-outliers. Default to be 1.
 #'
@@ -32,15 +36,19 @@
 #' @examples
 #' simulation <- multivarGaussian(n = 200, d = 3, out_perc = 0.03, out_mag = 4)
 #'
-multivarGaussian = function(n, d, out_perc, out_mag, cov_scale = 1){
+multivarGaussian = function(n, d, out_perc, out_mag, independent = TRUE, cov_scale = 1){
   mu = runif(d,1,50)
 
-  sigma = matrix(runif(d*d, -3, 3), d, d)
-  sigma = (sigma + t(sigma))/2
-  eigs = eigen(sigma)$values
-  if (min(eigs) <= 0.5) {sigma = sigma - (min(eigs) - 0.5) * diag(d)}
+  if (independent){
+    sigma = diag(runif(d, 1, 3))
+  } else{
+    sigma = matrix(runif(d*d, -3, 3), d, d)
+    sigma = (sigma + t(sigma))/2
+    eigs = eigen(sigma)$values
+    if (min(eigs) <= 0.5) {sigma = sigma - (min(eigs) - 0.5) * diag(d)}
+  }
 
-  sigma = cov_scale * sigma * runif(1,1,10)
+  sigma = cov_scale * sigma * runif(1,1,4)
   sigma_out = cov_scale * sigma * out_mag
   if (out_perc == 0 ) {
     gauss = mvrnorm(n, mu = mu, Sigma = sigma) #, tol = 1)

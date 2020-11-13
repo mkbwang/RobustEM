@@ -15,7 +15,11 @@ Depends:
 Imports:
     dplyr,
     MASS,
-    stats
+    stats,
+    mixtools,
+    RColorBrewer,
+    ggplot2,
+    graphics
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: 
