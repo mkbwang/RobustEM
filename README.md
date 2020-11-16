@@ -1,15 +1,13 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 
 # RobustEM
 
-<!-- badges: start -->
-
-<!-- badges: end -->
 
 The goal of RobustEM is to carry out clustering on high dimensional
 points using expectation-maximization algorithm which is robust against
-outliers.
+outliers. To install the package, make sure you have `devtools` package
+loaded and type `install_github("mkbwang/RobustEM")`.
 
 ## Usage Example
 
@@ -60,4 +58,4 @@ summary(result)
 plot(result)
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-2-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-2-2.png" width="100%" />
