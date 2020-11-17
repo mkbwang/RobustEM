@@ -7,7 +7,7 @@
 The goal of RobustEM is to carry out clustering on high dimensional
 points using expectation-maximization algorithm which is robust against
 outliers. To install the package, make sure you have `devtools` package
-loaded and type `install_github("mkbwang/RobustEM")`.
+loaded and type `install_github("mkbwang/RobustEM", ref="main")`.
 
 ## Usage Example
 
