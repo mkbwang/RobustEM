@@ -1,0 +1,26 @@
+Package: RobustEM
+Title: Robust Expectation Maximization Algorithm against Outliers
+Version: 0.1.0
+Authors@R: 
+    person(given = "Mukai",
+           family = "Wang",
+           role = c("aut", "cre"),
+           email = "wangmk@umich.edu")
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 3.5.0),
+    mclust
+Imports:
+    dplyr,
+    MASS,
+    stats,
+    mixtools,
+    RColorBrewer,
+    ggplot2,
+    graphics
+LazyData: true
+RoxygenNote: 6.1.1
+Suggests: 
+    testthat
